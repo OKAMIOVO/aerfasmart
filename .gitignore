@@ -1,8 +1,7 @@
 .vscode/
 old/
-Backup/*.c
-Backup/*.h
-Backup/
+/**/Backup/*.c
+/**/Backup/*.h
 STM32G070RB.uvguix.*
 *.bak
 *.ddk
