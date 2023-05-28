@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceInsightBookmarks
+	AppVer="4.00.0084"
+	AppVerMinReader="4.00.0009"
+	>
+	<Bookmarks>
+		<Mark
+			Name="7391777794841071010202"
+			Comment="MotorTorque"
+			File="Src\GUI.c"
+			Line="16564"
+			Column="0"
+			LineOffset="0"
+			/>
+		<Mark
+			Name="0887551090923030110202"
+			Comment=""
+			File="Src\GUI.c"
+			Line="16564"
+			Column="0"
+			Symbol="GUI_Task"
+			SymbolInstance="0"
+			SymbolType="Function"
+			LineOffset="104"
+			/>
+		<Mark
+			Name="4209926014533071301202"
+			Comment=""
+			File="Src\GUI.c"
+			Line="16564"
+			Column="0"
+			Symbol="GUI_Task"
+			SymbolInstance="0"
+			SymbolType="Function"
+			LineOffset="104"
+			/>
+	</Bookmarks>
+</SourceInsightBookmarks>
