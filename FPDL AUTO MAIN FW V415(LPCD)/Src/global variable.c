@@ -137,3 +137,7 @@ StrongUnlockMgr_t StrongUnlockMgr;
 
 
 
+// 阿尔法
+UserResMsg userResMsg;
+DelUserMsg delUserMsg;
+AllDelUserMsg allDelUserMsg;

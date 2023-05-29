@@ -232,6 +232,10 @@
 #define HZ_zeng		    218
 #define HZ_qu		    219
 #define HZ_xiao		    220
+#define HZ_shi          221
+#define HZ_she          222
+#define HZ_xiang        223
+
 
 #define ZF_0			230
 #define ZF_1			231

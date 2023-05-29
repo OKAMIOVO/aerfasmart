@@ -131,6 +131,16 @@ static uint16_t RegisterManagerFPCVoiceBuff[][3]=
 	{VOICE_PleaseEnter,VOICE_ID,DEF_VoiceSegmentEndFlag},
 };
 
+//static uint16_t UserIdVoiceBuff[][2]=
+//{	
+//	{VOICE_ID,DEF_VoiceSegmentEndFlag},
+//};
+
+//static uint16_t UserIdResFPCVoiceBuff[][5]=
+//{	
+//	{VOICE_PleaseEnter,VOICE_Fingerprint,VOICE_Password,VOICE_Card,DEF_VoiceSegmentEndFlag},
+//};
+
 static uint16_t AllDeleteUserVoiceBuff[][3]=
 {	
 	{VOICE_All,VOICE_Delete,DEF_VoiceSegmentEndFlag},
@@ -4061,6 +4071,41 @@ void ShowOperateSuccess(void){
 	DEF_MenuSwitchDelayTime;
 }
 
+void GoInTo_ResManagerIdFPCInit(void){
+	VoiceMenuMgr.MenuPoint = 0;
+	VoiceMenuMgr.TotalMenuNum = 3;
+	CurrentScreen = SCREEN_ResManagerIdFPC;
+	DEF_MenuSwitchDelayTime;
+}
+
+void GoInTo_ResManagerIdFaceInit(void){
+	VoiceMenuMgr.MenuPoint = 0;
+	VoiceMenuMgr.TotalMenuNum = 3;
+	CurrentScreen = SCREEN_ResManagerIdFace;
+	DEF_MenuSwitchDelayTime;
+}
+
+void GoInTo_ResNormalIdFPCInit(void){
+	VoiceMenuMgr.MenuPoint = 0;
+	VoiceMenuMgr.TotalMenuNum = 3;
+	CurrentScreen = SCREEN_ResNormalUserIdFPC;
+	DEF_MenuSwitchDelayTime;
+}
+
+void GoInTo_ResNormalIdFaceInit(void){
+	VoiceMenuMgr.MenuPoint = 0;
+	VoiceMenuMgr.TotalMenuNum = 3;
+	CurrentScreen = SCREEN_ResNormalUserIdFace;
+	DEF_MenuSwitchDelayTime;
+}
+
+void GoInTo_DelUserIdInit(void){
+	VoiceMenuMgr.MenuPoint = 0;
+	VoiceMenuMgr.TotalMenuNum = 3;
+	CurrentScreen = SCREEN_DelUserId;
+	DEF_MenuSwitchDelayTime;
+}
+
 void ShowManagerMenu(void){
 	uint8_t i;
 
@@ -4146,17 +4191,143 @@ void ShowRegisterManagerFPCPage(void){
 		}
 	}
 
-	for (i=0;i<4;i++)
-	{
-		if (SystemLanguage == Chinese){
-			DisHZ16x14Str(2*i,0,RegisterFPCPageStr[i],NormalDisplay);
-		}
-		else{
-			DisEN16x8Str(2*i,0,RegisterFPCPageStrEn[i],NormalDisplay);
-		}
 
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,RegisterFPCPageStr[0],NormalDisplay);
+		DisHZ16x14Str(6,0,RegisterFPCPageStr[3],NormalDisplay);
+	}
+	else{
+		DisEN16x8Str(0,0,RegisterFPCPageStrEn[0],NormalDisplay);
+		DisEN16x8Str(6,0,RegisterFPCPageStrEn[3],NormalDisplay);
 	}
 	
+	GUI_DataInputCreat(2,53,3,0x0001);
+
+	
+}
+
+void ShowResManagerIDFPC(void){
+	
+	uint16_t value = DataInputMgr.Value;
+	
+	const uint8_t TitleStr[]={HZ_bian,HZ_hao,ZF_maohao,HZ_end};	// ±àºÅ
+	const uint8_t TitleStrEn[]={"ID:"};
+	
+	const uint8_t ContentStr[][7]={
+	
+		{HZ_qing,HZ_shu,HZ_ru,HZ_end},
+		{HZ_zhi,HZ_wen,HZ_mi,HZ_ma,HZ_ka,HZ_pian,HZ_end}
+	};
+	
+	const uint8_t ContentStrEn[][20]={
+		
+		{"Please Enter"},
+		{"Fprint Password Card"}
+		
+	};
+	
+	uint16_t voiceArray[4];
+	voiceArray[0]=TranslateNumberToVoice(value%1000/100);
+	voiceArray[1]=TranslateNumberToVoice(value%100/10);
+	voiceArray[2]=TranslateNumberToVoice(value%10);
+	voiceArray[3] = DEF_VoiceSegmentEndFlag;
+	
+	static uint16_t UserIdVoiceBuff[][3]=
+		{	
+			{VOICE_ID,DEF_VoiceSegmentEndFlag},
+		};
+		
+	static uint16_t UserIdResFPCVoiceBuff[][5]=
+		{	
+			{VOICE_PleaseEnter,VOICE_Fingerprint,VOICE_Password,VOICE_Card,DEF_VoiceSegmentEndFlag},
+		};
+
+	static uint16_t* ResManagerIDFPCVoiceBuffer[3];
+	
+	ResManagerIDFPCVoiceBuffer[0] = UserIdVoiceBuff[0];
+	ResManagerIDFPCVoiceBuffer[1] = &(voiceArray[0]);
+	ResManagerIDFPCVoiceBuffer[2] = UserIdResFPCVoiceBuff[0];
+	
+	if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE ){
+		if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum ){
+			PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,ResManagerIDFPCVoiceBuffer[VoiceMenuMgr.MenuPoint]);
+			VoiceMenuMgr.MenuPoint++;
+		}
+	}
+	
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(2,53,ContentStr[0],NormalDisplay);
+		DisHZ16x14Str(4,30,ContentStr[1],NormalDisplay);
+	}
+	else{
+		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(2,53,ContentStrEn[0],NormalDisplay);
+		DisHZ16x14Str(4,0,ContentStrEn[1],NormalDisplay);
+	}
+	
+}
+
+
+
+void ShowResManagerIDFace(void){
+	uint16_t value = DataInputMgr.Value;
+	
+	const uint8_t TitleStr[]={HZ_bian,HZ_hao,ZF_maohao,HZ_end};	// ±àºÅ
+	const uint8_t TitleStrEn[]={"ID:"};
+	
+	const uint8_t ContentStr[][7]={
+	
+		{HZ_qing,HZ_zhengque,HZ_shi,HZ_she,HZ_xiang,HZ_tou,HZ_end}
+	};
+	
+	const uint8_t ContentStrEn[][24]={
+		
+		{"Please stare at camera"}
+		
+	};
+	
+	uint16_t voiceArray[4];
+	voiceArray[0]=TranslateNumberToVoice(value%1000/100);
+	voiceArray[1]=TranslateNumberToVoice(value%100/10);
+	voiceArray[2]=TranslateNumberToVoice(value%10);
+	voiceArray[3] = DEF_VoiceSegmentEndFlag;
+	
+	static uint16_t UserIdVoiceBuff[][3]=
+		{	
+			{VOICE_ID,DEF_VoiceSegmentEndFlag},
+		};
+		
+	static uint16_t UserIdResFPCVoiceBuff[][2]=
+		{	
+			{VOICE_PleaseInputFace,DEF_VoiceSegmentEndFlag},
+		};
+
+	static uint16_t* ResManagerIDFPCVoiceBuffer[3];
+	
+	ResManagerIDFPCVoiceBuffer[0] = UserIdVoiceBuff[0];
+	ResManagerIDFPCVoiceBuffer[1] = &(voiceArray[0]);
+	ResManagerIDFPCVoiceBuffer[2] = UserIdResFPCVoiceBuff[0];
+	
+	if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE ){
+		if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum ){
+			PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,ResManagerIDFPCVoiceBuffer[VoiceMenuMgr.MenuPoint]);
+			VoiceMenuMgr.MenuPoint++;
+		}
+	}
+	
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(4,23,ContentStr[0],NormalDisplay);
+	}
+	else{
+		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(4,23,ContentStrEn[0],NormalDisplay);
+	}
 }
 
 void ShowRegisterManagerFacePage(void){
@@ -4171,16 +4342,16 @@ void ShowRegisterManagerFacePage(void){
 		}
 	}
 
-	for (i=0;i<4;i++)
-	{
-		if (SystemLanguage == Chinese){
-			DisHZ16x14Str(2*i,0,RegisterFPCPageStr[i],NormalDisplay);
-		}
-		else{
-			DisEN16x8Str(2*i,0,RegisterFPCPageStrEn[i],NormalDisplay);
-		}
-
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,RegisterFPCPageStr[0],NormalDisplay);
+		DisHZ16x14Str(6,0,RegisterFPCPageStr[3],NormalDisplay);
 	}
+	else{
+		DisEN16x8Str(0,0,RegisterFPCPageStrEn[0],NormalDisplay);
+		DisEN16x8Str(6,0,RegisterFPCPageStrEn[3],NormalDisplay);
+	}
+	
+	GUI_DataInputCreat(2,53,3,0x0001);
 }
 
 void ShowRegisterUserFPCPage(void){
@@ -4205,6 +4376,128 @@ void ShowRegisterUserFPCPage(void){
 		}
 
 	}
+	
+	GUI_DataInputCreat(2,53,3,0x000a);
+}
+
+void ShowResNormalIDFPC(void){
+	uint16_t value = DataInputMgr.Value;
+	
+	const uint8_t TitleStr[]={HZ_bian,HZ_hao,ZF_maohao,HZ_end};	// ±àºÅ
+	const uint8_t TitleStrEn[]={"ID:"};
+	
+	const uint8_t ContentStr[][7]={
+	
+		{HZ_qing,HZ_shu,HZ_ru,HZ_end},
+		{HZ_zhi,HZ_wen,HZ_mi,HZ_ma,HZ_ka,HZ_pian,HZ_end}
+	};
+	
+	const uint8_t ContentStrEn[][20]={
+		
+		{"Please Enter"},
+		{"Fprint Password Card"}
+		
+	};
+	
+	uint16_t voiceArray[4];
+	voiceArray[0]=TranslateNumberToVoice(value%1000/100);
+	voiceArray[1]=TranslateNumberToVoice(value%100/10);
+	voiceArray[2]=TranslateNumberToVoice(value%10);
+	voiceArray[3] = DEF_VoiceSegmentEndFlag;
+	
+	static uint16_t UserIdVoiceBuff[][3]=
+		{	
+			{VOICE_ID,DEF_VoiceSegmentEndFlag},
+		};
+		
+	static uint16_t UserIdResFPCVoiceBuff[][5]=
+		{	
+			{VOICE_PleaseEnter,VOICE_Fingerprint,VOICE_Password,VOICE_Card,DEF_VoiceSegmentEndFlag},
+		};
+
+	static uint16_t* ResManagerIDFPCVoiceBuffer[3];
+	
+	ResManagerIDFPCVoiceBuffer[0] = UserIdVoiceBuff[0];
+	ResManagerIDFPCVoiceBuffer[1] = &(voiceArray[0]);
+	ResManagerIDFPCVoiceBuffer[2] = UserIdResFPCVoiceBuff[0];
+	
+	if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE ){
+		if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum ){
+			PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,ResManagerIDFPCVoiceBuffer[VoiceMenuMgr.MenuPoint]);
+			VoiceMenuMgr.MenuPoint++;
+		}
+	}
+	
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(2,53,ContentStr[0],NormalDisplay);
+		DisHZ16x14Str(4,30,ContentStr[1],NormalDisplay);
+	}
+	else{
+		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(2,53,ContentStrEn[0],NormalDisplay);
+		DisHZ16x14Str(4,0,ContentStrEn[1],NormalDisplay);
+	}
+}
+
+void ShowResNormalIDFace(void){
+	uint16_t value = DataInputMgr.Value;
+	
+	const uint8_t TitleStr[]={HZ_bian,HZ_hao,ZF_maohao,HZ_end};	// ±àºÅ
+	const uint8_t TitleStrEn[]={"ID:"};
+	
+	const uint8_t ContentStr[][7]={
+	
+		{HZ_qing,HZ_zhengque,HZ_shi,HZ_she,HZ_xiang,HZ_tou,HZ_end}
+	};
+	
+	const uint8_t ContentStrEn[][24]={
+		
+		{"Please stare at camera"}
+		
+	};
+	
+	uint16_t voiceArray[4];
+	voiceArray[0]=TranslateNumberToVoice(value%1000/100);
+	voiceArray[1]=TranslateNumberToVoice(value%100/10);
+	voiceArray[2]=TranslateNumberToVoice(value%10);
+	voiceArray[3] = DEF_VoiceSegmentEndFlag;
+	
+	static uint16_t UserIdVoiceBuff[][3]=
+		{	
+			{VOICE_ID,DEF_VoiceSegmentEndFlag},
+		};
+		
+	static uint16_t UserIdResFPCVoiceBuff[][2]=
+		{	
+			{VOICE_PleaseInputFace,DEF_VoiceSegmentEndFlag},
+		};
+
+	static uint16_t* ResManagerIDFPCVoiceBuffer[3];
+	
+	ResManagerIDFPCVoiceBuffer[0] = UserIdVoiceBuff[0];
+	ResManagerIDFPCVoiceBuffer[1] = &(voiceArray[0]);
+	ResManagerIDFPCVoiceBuffer[2] = UserIdResFPCVoiceBuff[0];
+	
+	if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE ){
+		if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum ){
+			PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,ResManagerIDFPCVoiceBuffer[VoiceMenuMgr.MenuPoint]);
+			VoiceMenuMgr.MenuPoint++;
+		}
+	}
+	
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(4,23,ContentStr[0],NormalDisplay);
+	}
+	else{
+		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
+		DisDigital16x8Str(0,35,value,NormalDisplay);
+		DisHZ16x14Str(4,23,ContentStrEn[0],NormalDisplay);
+	}
 }
 
 void ShowRegisterUserFacePage(void){
@@ -4219,16 +4512,16 @@ void ShowRegisterUserFacePage(void){
 		}
 	}
 
-	for (i=0;i<4;i++)
-	{
-		if (SystemLanguage == Chinese){
-			DisHZ16x14Str(2*i,0,RegisterUserFPCPageStr[i],NormalDisplay);
-		}
-		else{
-			DisEN16x8Str(2*i,0,RegisterUserFPCPageStrEn[i],NormalDisplay);
-		}
-
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,RegisterUserFPCPageStr[0],NormalDisplay);
+		DisHZ16x14Str(6,0,RegisterUserFPCPageStr[3],NormalDisplay);
 	}
+	else{
+		DisEN16x8Str(0,0,RegisterUserFPCPageStrEn[0],NormalDisplay);
+		DisEN16x8Str(6,0,RegisterUserFPCPageStrEn[3],NormalDisplay);
+	}
+	
+	GUI_DataInputCreat(2,53,3,0x000a);
 }
 
 void ShowDeleteUserPage(void){
@@ -4243,16 +4536,46 @@ void ShowDeleteUserPage(void){
 		}
 	}
 
-	for (i=0;i<4;i++)
-	{
-		if (SystemLanguage == Chinese){
-			DisHZ16x14Str(2*i,0,DeleteUserPageStr[i],NormalDisplay);
-		}
-		else{
-			DisEN16x8Str(2*i,0,DeleteUserPageStrEn[i],NormalDisplay);
-		}
-
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(0,0,DeleteUserPageStr[0],NormalDisplay);
+		DisHZ16x14Str(6,0,DeleteUserPageStr[3],NormalDisplay);
 	}
+	else{
+		DisEN16x8Str(0,0,DeleteUserPageStrEn[0],NormalDisplay);
+		DisEN16x8Str(6,0,DeleteUserPageStrEn[3],NormalDisplay);
+	}
+	
+	GUI_DataInputCreat(2,53,3,0x000a);
+	
+}
+
+void ShowDelUserId(void){
+	uint16_t value = DataInputMgr.Value;
+	#ifdef 0
+	const uint8_t Content1Str[]={HZ_cao,HZ_zhuo,HZ_shibai,HZ_bai,HZ_end};	// ±àºÅ
+	const uint8_t Content1strEn[]={"Operate failure"};
+	
+	const uint8_t Content2Str[]{HZ_yong,HZ_hu,HZ_bu,HZ_cun,HZ_zaima,HZ_end};	// ÓÃ»§²»´æÔÚ
+	const uint8_t Content2strEn[]={"The user does not exist"};
+	#endif
+	const uint8_t Content3Str[]={HZ_shan,HZ_chufa,HZ_cheng,HZ_gong,HZ_end};
+	const uint8_t Content3StrEn[]={"successfully delete"};
+	
+	#ifdef 0
+	if ( VoiceDataTransferMgr.VoicePlayEnd == bTRUE ){
+		if (VoiceMenuMgr.MenuPoint < VoiceMenuMgr.TotalMenuNum ){
+			PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,ResManagerIDFPCVoiceBuffer[VoiceMenuMgr.MenuPoint]);
+			VoiceMenuMgr.MenuPoint++;
+		}
+	}
+	#endif
+	if (SystemLanguage == Chinese){
+		DisHZ16x14Str(2,23,Content3Str,NormalDisplay);
+	}
+	else{
+		DisHZ16x14Str(2,23,Content3StrEn,NormalDisplay);
+	}
+	
 }
 
 void ShowAllDeleteUserPage(void){
@@ -14240,7 +14563,26 @@ void GUI_Button_Monitor(void)
 ////					GUI_Flag_RefreshLCD = bTRUE;
 ////				}
 			}
+			
+			//GUI_UserIDinputButtonMonitor(gui_keycode);
 				
+			break;
+			
+		case SCREEN_ResManagerFPCInput:
+			
+			GUI_UserIDinputButtonMonitor(gui_keycode);
+			if(gui_keycode == KEY_POUNDSIGN ){
+					//ShowResManagerIDFPC();
+					//CurrentScreen = SCREEN_ResManagerIdFPC;
+					GoInTo_ResManagerIdFPCInit();
+					DataInputMgr.Status = InputIdle;
+				}
+			if(DataInputMgr.Status == InputExit){
+				DataInputMgr.Status = InputIdle;
+				if ( gui_keycode == KEY_ASTERISK ){
+					AddManagerMenu_Init();
+				}
+			}
 			break;
 			
 		case SCREEN_RegisterManagerFace:
@@ -14267,6 +14609,26 @@ void GUI_Button_Monitor(void)
 ////				}
 			}
 				
+			break;
+			
+		case SCREEN_ResManagerFaceInput:
+			
+			GUI_UserIDinputButtonMonitor(gui_keycode);
+			if(gui_keycode == KEY_POUNDSIGN ){
+					//ShowResManagerIDFPC();
+					//CurrentScreen = SCREEN_ResManagerIdFPC;
+					//GoInTo_ResManagerIdFPCInit();
+					GoInTo_ResManagerIdFaceInit();
+					DataInputMgr.Status = InputIdle;
+					
+					
+				}
+			if(DataInputMgr.Status == InputExit){
+				DataInputMgr.Status = InputIdle;
+				if ( gui_keycode == KEY_ASTERISK ){
+					AddManagerMenu_Init();
+				}
+			}
 			break;
 		
 		case SCREEN_RegisterNormalUserFPC:
@@ -14295,6 +14657,25 @@ void GUI_Button_Monitor(void)
 				
 			break;
 			
+		case SCREEN_ResNormalUserFPCInput:
+			GUI_UserIDinputButtonMonitor(gui_keycode);
+			if(gui_keycode == KEY_POUNDSIGN ){
+					//ShowResManagerIDFPC();
+					//CurrentScreen = SCREEN_ResManagerIdFPC;
+					//GoInTo_ResManagerIdFPCInit();
+					GoInTo_ResNormalIdFPCInit();
+					DataInputMgr.Status = InputIdle;
+					
+					
+				}
+			if(DataInputMgr.Status == InputExit){
+				DataInputMgr.Status = InputIdle;
+				if ( gui_keycode == KEY_ASTERISK ){
+					AddUserMenu_Init();
+				}
+			}
+			break;
+			
 		case SCREEN_RegisterNormalUserFace:
 			
 			if ( gui_keycode == KEY_ASTERISK )
@@ -14321,6 +14702,41 @@ void GUI_Button_Monitor(void)
 				
 			break;
 			
+		case SCREEN_DelUserId:
+			if ( gui_keycode == KEY_ASTERISK )
+			{
+//				if (( FaceUserRegisterMgr.Status != RegisterFaceUserSuccess )
+//					&&( FaceUserRegisterMgr.Status != RegisterFaceUserFail )
+//					)
+//				{
+					DEF_ButtonPress_Voice;
+					//FaceRecognition_FaceReset();
+////					FaceRecognition_HardwarePowerOff();
+					DeleteUserMenu_Init();
+//				}
+			}	
+			break;
+			
+		case SCREEN_ResNormalUserFaceInput:
+			
+			GUI_UserIDinputButtonMonitor(gui_keycode);
+			if(gui_keycode == KEY_POUNDSIGN ){
+					//ShowResManagerIDFPC();
+					//CurrentScreen = SCREEN_ResManagerIdFPC;
+					//GoInTo_ResManagerIdFPCInit();
+					GoInTo_ResNormalIdFaceInit();
+					DataInputMgr.Status = InputIdle;
+					
+					
+				}
+			if(DataInputMgr.Status == InputExit){
+				DataInputMgr.Status = InputIdle;
+				if ( gui_keycode == KEY_ASTERISK ){
+					AddUserMenu_Init();
+				}
+			}
+			break;
+			
 		case SCREEN_NumberDelete:
 			
 			if ( gui_keycode == KEY_ASTERISK )
@@ -14345,6 +14761,28 @@ void GUI_Button_Monitor(void)
 ////				}
 			}
 			
+			break;
+			
+		case SCREEN_DelUserIdInput:
+			
+			GUI_UserIDinputButtonMonitor(gui_keycode);
+			if(gui_keycode == KEY_POUNDSIGN ){
+					//ShowResManagerIDFPC();
+					//CurrentScreen = SCREEN_ResManagerIdFPC;
+					//GoInTo_ResManagerIdFPCInit();
+					GoInTo_DelUserIdInit();
+					DataInputMgr.Status = InputIdle;
+					
+					
+				}
+			if(DataInputMgr.Status == InputExit){
+				DataInputMgr.Status = InputIdle;
+				if ( gui_keycode == KEY_ASTERISK ){
+					DeleteUserMenu_Init();
+				}else if(gui_keycode ==KEY_POUNDSIGN){
+					
+				}
+			}
 			break;
 			
 		case SCREEN_AllDelete:
@@ -15995,29 +16433,94 @@ void GUI_Update_Screen(void)
 		
 		case SCREEN_RegisterManagerFPC:
 			
+//			SET_ALLKEYLED_ON();
+//			ShowRegisterManagerFPCPage();
+			CurrentScreen = SCREEN_ResManagerFPCInput;
+			break;
+		
+		case SCREEN_ResManagerFPCInput:
+		
 			SET_ALLKEYLED_ON();
 			ShowRegisterManagerFPCPage();
 			break;
 		
+		case SCREEN_ResManagerIdFPC:
+			
+			SET_ALLKEYLED_ON();
+			ShowResManagerIDFPC();
+			break;
+		
+		case SCREEN_ResManagerIdFace:
+			
+			SET_ALLKEYLED_ON();
+			ShowResManagerIDFace();
+			break;
+		
+		case SCREEN_ResNormalUserIdFPC:
+			
+			SET_ALLKEYLED_ON();
+			ShowResNormalIDFPC();
+			break;
+		
+		case SCREEN_ResNormalUserIdFace:
+			
+			SET_ALLKEYLED_ON();
+			ShowResNormalIDFace();
+			break;
+		
+		case SCREEN_DelUserId:
+		
+			SET_ALLKEYLED_ON();
+			ShowDelUserId();
+			break;
+		
 		case SCREEN_RegisterManagerFace:
+			
+//			SET_ALLKEYLED_ON();
+//			ShowRegisterManagerFacePage();
+			CurrentScreen = SCREEN_ResManagerFaceInput;
+			break; 
+		
+		case SCREEN_ResManagerFaceInput:
 			
 			SET_ALLKEYLED_ON();
 			ShowRegisterManagerFacePage();
-			break; 
+			break;
 		
 		case SCREEN_RegisterNormalUserFPC:
 			
+//			SET_ALLKEYLED_ON();
+//			ShowRegisterUserFPCPage();
+			CurrentScreen = SCREEN_ResNormalUserFPCInput;
+			break;
+			
+		case SCREEN_ResNormalUserFPCInput:
+			
 			SET_ALLKEYLED_ON();
 			ShowRegisterUserFPCPage();
-			break; 
+			break;
 		
 		case SCREEN_RegisterNormalUserFace:
+			
+//			SET_ALLKEYLED_ON();
+//			ShowRegisterUserFacePage();
+			CurrentScreen = SCREEN_ResNormalUserFaceInput;
+			break;
+		
+		case SCREEN_ResNormalUserFaceInput:
 			
 			SET_ALLKEYLED_ON();
 			ShowRegisterUserFacePage();
 			break;
 		
 		case SCREEN_NumberDelete:
+			
+//			SET_ALLKEYLED_ON();
+//			ShowDeleteUserPage();
+			CurrentScreen = SCREEN_DelUserIdInput;
+			break;
+		
+		case SCREEN_DelUserIdInput:
 			
 			SET_ALLKEYLED_ON();
 			ShowDeleteUserPage();
@@ -16031,7 +16534,7 @@ void GUI_Update_Screen(void)
 		
 		case SCREEN_OperateSuccess:
 			
-			SET_ALLKEYLED_OFF();
+			SET_APled_ON();
 			AllDeleteCnt--;
 			ShowOperateSuccessPage();
 			break;

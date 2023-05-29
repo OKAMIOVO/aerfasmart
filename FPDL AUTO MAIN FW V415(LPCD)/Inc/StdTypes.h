@@ -215,7 +215,17 @@ typedef enum
 	SCREEN_NumberDelete,
 	SCREEN_AllDelete,
 	SCREEN_OperateSuccess,
-	SCREEN_AllDeleteSuccess
+	SCREEN_AllDeleteSuccess,
+	SCREEN_ResManagerFPCInput,
+	SCREEN_ResManagerFaceInput,
+	SCREEN_ResNormalUserFPCInput,
+	SCREEN_ResNormalUserFaceInput,
+	SCREEN_DelUserIdInput,
+	SCREEN_ResManagerIdFPC,
+	SCREEN_ResManagerIdFace,
+	SCREEN_ResNormalUserIdFPC,
+	SCREEN_ResNormalUserIdFace,
+	SCREEN_DelUserId
 }screen_t;	
 
 
@@ -2112,6 +2122,28 @@ typedef struct
 	bool_t	TrigStrongUnlocking;
 }StrongUnlockMgr_t;
 
+typedef struct{
+	uint8_t UserId;
+	FpUserRegisterMgr_t FpUser;
+	PasscodeUserRegisterMgr_t PasscodeUser;
+	CardRegisterMgr_t CardUser;
+	FaceUserRegisterMgr_t FaceUser;
+}UserResMsg;
+
+typedef struct{
+	uint8_t UserId;
+	FpUserDeleteMgr_t FpUserDel;
+	PasscodeUserDeleteMgr_t PasscodeUserDel;
+	CardUserDeleteMgr_t CardUserDel;
+	FaceUserDeleteMgr_t FaceUserDel;
+}DelUserMsg;
+
+typedef struct{
+	AllUserFpDeleteMgr_t AllDelUserFp;
+	AllPasscodeUserDeleteMgr_t AllDelUserPasscode;
+	AllCardUserDeleteMgr_t AllDelUserCard;
+	AllUserFaceDeleteMgr_t AllDelUserFace;
+}AllDelUserMsg;
 
 #ifdef MAIN_C
 #define GLOBAL extern /*********/
