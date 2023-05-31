@@ -230,11 +230,17 @@
 #define HZ_lao			216
 #define HZ_bufen		217
 #define HZ_zeng		    218
-#define HZ_qu		    219
-#define HZ_xiao		    220
-#define HZ_shi          221
-#define HZ_she          222
-#define HZ_xiang        223
+#define HZ_quchu		219
+#define HZ_quxiao		220
+#define HZ_zhushi       221
+#define HZ_shequ        222
+#define HZ_shexiang     223
+
+#define HZ_a            224
+#define HZ_fa           225
+#define HZ_jiguang      226
+#define HZ_guang        227
+
 
 
 #define ZF_0			230
@@ -291,6 +297,7 @@ extern const uint8_t Icon_WifiNoSignal[];
 extern const uint8_t Icon_DoorBell[];
 extern const uint8_t Icon_WelcomeEn[];
 extern const uint8_t Icon_Welcome[];
+extern const uint8_t Icon_Aerfajiguang[];
 
 
 #endif

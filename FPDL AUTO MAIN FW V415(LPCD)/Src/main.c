@@ -166,7 +166,7 @@ int main(void)
 		if ( G_tflagbits.T128Hz == 1 )
 		{
 			G_tflagbits.T128Hz = 0;
-			ComPort_Mgr_Task();
+			//ComPort_Mgr_Task();
 		}	
 
 		/*********************/

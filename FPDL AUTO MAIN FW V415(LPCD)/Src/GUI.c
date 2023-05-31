@@ -60,7 +60,9 @@
 
 #define DEF_MenuSwitchDelayTime //Hardware_DelayMs(100);
 
-uint16_t AllDeleteCnt = 300;
+uint8_t AllDeleteCnt = 192;
+uint8_t keyPressFlag = 0;
+uint8_t defaultDisplayFlag = 0;
 
 static uint16_t MainMenuVoiceBuff[][6]=
 {	
@@ -787,7 +789,7 @@ const uint8_t DeleteAllUserPageStr[][16]=
 	{HZ_kongge,HZ_kongge,HZ_kongge,HZ_quan,HZ_bufen,HZ_shan,HZ_chufa,HZ_end},		//请输入编号
 	{HZ_kongge,HZ_end},
 	{HZ_kongge,HZ_end},
-	{ZF_xinghao,HZ_qu,HZ_xiao,HZ_kongge,HZ_kongge,HZ_kongge,HZ_kongge,ZF_jinghao,HZ_que,HZ_renzhen,HZ_end},	//范围[001-200]
+	{ZF_xinghao,HZ_quchu,HZ_quxiao,HZ_kongge,HZ_kongge,HZ_kongge,HZ_kongge,ZF_jinghao,HZ_que,HZ_renzhen,HZ_end},
 			  
 };	
 const uint8_t DeleteAllUserPageStrEn[][30]= 
@@ -1812,7 +1814,7 @@ void SystemConfigReset(void)
 /*******************************************************/
 void ShowLockBrand(void)
 {
-	const uint8_t Welcome_Str[8]={HZ_huan,HZ_yingjie,HZ_shiyong,HZ_yong,HZ_zhineng,HZ_neng,HZ_suomen,HZ_end};
+	const uint8_t Welcome_Str[6]={HZ_a,HZ_erhou,HZ_fa,HZ_jiguang,HZ_guang,HZ_end};
 	const uint8_t Welcome_StrEn[]={"WELCOME"};
 
 	if ( LockBrand.BrandType == SmallBrand )
@@ -1838,7 +1840,8 @@ void ShowLockBrand(void)
 	{
 		if ( SystemLanguage == Chinese ) 
 		{
-			DisHZ16x14Str(6,16,Welcome_Str,NormalDisplay);
+			DisImage(2,0,75,16,&Icon_Aerfajiguang[0],NormalDisplay);
+			//DisHZ16x14Str(2,16,Welcome_Str,NormalDisplay);
 		}
 		else
 		{
@@ -3296,10 +3299,10 @@ void DisplayMainPage(void)
 	}
 	else
 	{
-		DisHZ16x14Str(0,8,YearMonthDay,NormalDisplay);
-		DisBcdDigital16x8(0,24,SystemTime.year,NormalDisplay);
-		DisBcdDigital16x8(0,48,SystemTime.month,NormalDisplay);
-		DisBcdDigital16x8(0,72,SystemTime.date,NormalDisplay);
+		//DisHZ16x14Str(6,8,YearMonthDay,NormalDisplay);
+		DisBcdDigital16x8(6,24,SystemTime.year,NormalDisplay);
+		DisBcdDigital16x8(6,48,SystemTime.month,NormalDisplay);
+		DisBcdDigital16x8(6,72,SystemTime.date,NormalDisplay);
 		
 		if (	( PasscodeUserIdentifyMgr.Status == PasscodeIdentifyIdle )
 			)
@@ -3356,9 +3359,9 @@ void DisplayMainPage(void)
 			{
 				GUI_Flag_RefreshLCD = bTRUE;
 
-				DisBcdDigital32x20(2,14,SystemTime.hour,NormalDisplay);
-				DisBcdDigital32x20(2,74,SystemTime.minute,NormalDisplay);
-				DisImage(2,54,20,32,ZF32x20[10],NormalDisplay);	
+				//DisBcdDigital32x20(2,14,SystemTime.hour,NormalDisplay);
+				//DisBcdDigital32x20(2,74,SystemTime.minute,NormalDisplay);
+				//DisImage(2,54,20,32,ZF32x20[10],NormalDisplay);	
 			}
 			
 			//DisHZ16x14Str(6,16,FPDLLog,NormalDisplay);
@@ -4074,6 +4077,7 @@ void ShowOperateSuccess(void){
 void GoInTo_ResManagerIdFPCInit(void){
 	VoiceMenuMgr.MenuPoint = 0;
 	VoiceMenuMgr.TotalMenuNum = 3;
+	PasscodeInputMgr.Point = 0x00;
 	CurrentScreen = SCREEN_ResManagerIdFPC;
 	DEF_MenuSwitchDelayTime;
 }
@@ -4219,11 +4223,10 @@ void ShowResManagerIDFPC(void){
 		{HZ_zhi,HZ_wen,HZ_mi,HZ_ma,HZ_ka,HZ_pian,HZ_end}
 	};
 	
-	const uint8_t ContentStrEn[][20]={
+	const uint8_t ContentStrEn[][25]={
 		
 		{"Please Enter"},
-		{"Fprint Password Card"}
-		
+		{"Fingerprint Password Card"}
 	};
 	
 	uint16_t voiceArray[4];
@@ -4254,18 +4257,24 @@ void ShowResManagerIDFPC(void){
 			VoiceMenuMgr.MenuPoint++;
 		}
 	}
-	
-	if (SystemLanguage == Chinese){
-		DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
-		DisDigital16x8Str(0,35,value,NormalDisplay);
-		DisHZ16x14Str(2,53,ContentStr[0],NormalDisplay);
-		DisHZ16x14Str(4,30,ContentStr[1],NormalDisplay);
+	if(defaultDisplayFlag == 0){
+		if (SystemLanguage == Chinese){
+			DisHZ16x14Str(0,0,TitleStr,NormalDisplay);
+			DisDigital16x8Str(0,35,value,NormalDisplay);
+			DisHZ16x14Str(2,53,ContentStr[0],NormalDisplay);
+			DisHZ16x14Str(4,30,ContentStr[1],NormalDisplay);
+		}
+		else{
+			DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
+			DisDigital16x8Str(0,35,value,NormalDisplay);
+			DisHZ16x14Str(2,53,ContentStrEn[0],NormalDisplay);
+			DisHZ16x14Str(4,30,ContentStrEn[1],NormalDisplay);
+		}
 	}
-	else{
-		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
-		DisDigital16x8Str(0,35,value,NormalDisplay);
-		DisHZ16x14Str(2,53,ContentStrEn[0],NormalDisplay);
-		DisHZ16x14Str(4,0,ContentStrEn[1],NormalDisplay);
+	
+	if(keyPressFlag == 1){
+		GUI_PasscodeInputCreat(2,0);
+		keyPressFlag = 0;
 	}
 	
 }
@@ -4280,7 +4289,7 @@ void ShowResManagerIDFace(void){
 	
 	const uint8_t ContentStr[][7]={
 	
-		{HZ_qing,HZ_zhengque,HZ_shi,HZ_she,HZ_xiang,HZ_tou,HZ_end}
+		{HZ_qing,HZ_zhengque,HZ_zhushi,HZ_shequ,HZ_shexiang,HZ_tou,HZ_end}
 	};
 	
 	const uint8_t ContentStrEn[][24]={
@@ -4392,10 +4401,10 @@ void ShowResNormalIDFPC(void){
 		{HZ_zhi,HZ_wen,HZ_mi,HZ_ma,HZ_ka,HZ_pian,HZ_end}
 	};
 	
-	const uint8_t ContentStrEn[][20]={
+	const uint8_t ContentStrEn[][25]={
 		
 		{"Please Enter"},
-		{"Fprint Password Card"}
+		{"Fingerprint Password Card"}
 		
 	};
 	
@@ -4438,7 +4447,7 @@ void ShowResNormalIDFPC(void){
 		DisEN16x8Str(0,0,TitleStrEn,NormalDisplay);
 		DisDigital16x8Str(0,35,value,NormalDisplay);
 		DisHZ16x14Str(2,53,ContentStrEn[0],NormalDisplay);
-		DisHZ16x14Str(4,0,ContentStrEn[1],NormalDisplay);
+		DisHZ16x14Str(4,30,ContentStrEn[1],NormalDisplay);
 	}
 }
 
@@ -4450,7 +4459,7 @@ void ShowResNormalIDFace(void){
 	
 	const uint8_t ContentStr[][7]={
 	
-		{HZ_qing,HZ_zhengque,HZ_shi,HZ_she,HZ_xiang,HZ_tou,HZ_end}
+		{HZ_qing,HZ_zhengque,HZ_shi,HZ_shequ,HZ_shexiang,HZ_tou,HZ_end}
 	};
 	
 	const uint8_t ContentStrEn[][24]={
@@ -4626,9 +4635,53 @@ void ShowOperateSuccessPage(void){
 		
 	if(AllDeleteCnt==0){
 		CurrentScreen = SCREEN_AllDeleteSuccess;
-		AllDeleteCnt = 300;
+		AllDeleteCnt = 192;
 	}
 		
+}
+
+
+void ResPassword(void){
+	
+	if ( PasscodeUserRegisterMgr.Status == InputFirstPasscode )
+				{
+					if ( gui_keycode != KEY_NONE )
+					{
+						defaultDisplayFlag = 1;
+						keyPressFlag = 1;
+						GUI_PasscodeInputButtonMonitor(gui_keycode);
+						PasscodeUserRegisterMgr.TimeCnt = Def_GuiTimeDelayCnt10s;
+					}
+				}
+				else if ( PasscodeUserRegisterMgr.Status == InputSecondPasscode )
+				{
+					if ( gui_keycode != KEY_NONE )
+					{
+						defaultDisplayFlag = 1;
+						keyPressFlag = 1;
+						GUI_PasscodeInputButtonMonitor(gui_keycode);
+						PasscodeUserRegisterMgr.TimeCnt = Def_GuiTimeDelayCnt10s;
+					}
+				}
+				else if ( PasscodeUserRegisterMgr.Status == ReportPasscodeUserID )
+				{
+					if ( gui_keycode == KEY_POUNDSIGN )
+					{
+						PasscodeUserRegisterMgr.Status = InputFirstPasscode;	
+						PasscodeUserRegisterMgr.TimeCnt = Def_GuiTimeDelayCnt10s;
+						PasscodeInputMgr.Point = 0x00;
+						PasscodeInputMgr.PasscodeLen = 12;
+						PasscodeInputMgr.Status = PasscodeInputStart;
+						PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,VoiceStr_PleaseInputPassword);
+						GUI_Flag_RefreshLCD = bTRUE;
+
+					}
+					else if ( gui_keycode == KEY_ASTERISK )
+					{
+						//GoIntoPasscodeMenu_Init();
+					}
+				}
+				
 }
 
 void ShowFaceMenu(void)
@@ -9251,6 +9304,415 @@ void ShowRegisterPasscodeUser(void)
 			}
 			else{
 				DisEN16x8Str(3,16,PasscodeIsBeUsedStrEn,NormalDisplay);
+			}
+		}
+		else if ( PasscodeUserRegisterMgr.ErrorType == MemoryIsFull )
+		{
+			if (SystemLanguage == Chinese){
+				DisHZ16x14Str(4,32,UserIsFullStr,NormalDisplay);
+			}
+			else{
+				DisEN16x8Str(4,4,UserIsFullStrEn,NormalDisplay);
+			}
+		}
+		else if  ( PasscodeUserRegisterMgr.ErrorType == TwoPasscodesDoNotMatch )
+		{
+			if (SystemLanguage == Chinese){
+				DisHZ16x14Str(4,34,InputErrorStr,NormalDisplay);
+			}
+			else{
+				DisEN16x8Str(4,20,InputErrorStrEn,NormalDisplay);
+			}
+		}
+		else if ( PasscodeUserRegisterMgr.ErrorType == QUIT )
+		{
+		
+		}
+		else
+		{
+			if (SystemLanguage == Chinese){
+				DisHZ16x14Str(4,36,OperationFailStr,NormalDisplay);
+			}
+			else{
+				DisEN16x8Str(4,48,OperationFailStrEn,NormalDisplay);
+			}
+		}
+	
+		if ( PasscodeUserRegisterMgr.TimeCnt-- < 1 )
+		{
+			if 	( 	(PasscodeUserRegisterMgr.ErrorType == QUIT )
+					&&(CheckMemoryMgr.FpMasterNum == 0x00 )
+					&&(CheckMemoryMgr.PasscodeMasterNum == 0x00)
+				)
+			{
+				GoIntoMainScreen_WithIdentifyInit();
+			}
+			else if ((CheckMemoryMgr.FpMasterNum == 0x00 )
+			&&(PasscodeUserRegisterMgr.UserPriority == Master)
+			&&(CheckMemoryMgr.PasscodeMasterNum == 0x00)
+			)
+			{
+				GoIntoMainScreen_WithIdentifyInit();
+			}
+			else if ( (PasscodeUserRegisterMgr.ErrorType == MemoryIsFull )
+				||(PasscodeUserRegisterMgr.ErrorType == QUIT )
+				||( PasscodeUserRegisterMgr.ErrorType == SystemNoMaster )
+				)
+			{
+				GoIntoPasscodeMenu_Init();
+			}
+			else
+			{
+				PasscodeUserRegisterMgr.Status = StartPasscodeUserRegister;
+				GUI_Flag_RefreshLCD = bTRUE;
+			}
+			GUI_SetFPM_LED(DEF_FpmLedMode_Breath,DEF_FpmLedColor_Blue,DEF_FpmLedColor_Blue,255);
+		}
+	}
+}
+
+void ShowRegisterPasswordUser(void)
+{
+	uint8_t i;
+	
+	/*const uint8_t TitleStr1[]={HZ_tian,HZ_jia,HZ_guan,HZ_li,HZ_mi,HZ_ma,HZ_end};  	//添加管理密码
+	const uint8_t TitleStr1En[]={"Add PW admin"};  	//添加管理密码
+	const uint8_t TitleStr2[]={HZ_tian,HZ_jia,HZ_yong,HZ_hu,HZ_mi,HZ_ma,HZ_end};	//添加用户密码
+	const uint8_t TitleStr2En[]={"Add PW user"};	//添加用户密码
+	const uint8_t PasscodeIsBeUsedStr[]={HZ_chong,HZ_fu,HZ_mi,HZ_ma,HZ_end};
+	const uint8_t PasscodeIsBeUsedStrEn[]={"Repeated PW"};*/
+
+
+	if (PasscodeUserRegisterMgr.UserPriority == Master)
+	{
+		if (SystemLanguage == Chinese){
+			//DisHZ16x14Str(0,22,TitleStr1,NormalDisplay);
+		}
+		else{
+			//DisEN16x8Str(0,16,TitleStr1En,NormalDisplay);
+		}
+	}
+	else
+	{
+		if (SystemLanguage == Chinese){
+			//DisHZ16x14Str(0,22,TitleStr2,NormalDisplay);
+		}
+		else{
+			//DisEN16x8Str(0,20,TitleStr2En,NormalDisplay);
+		}
+	}
+	
+	if (PasscodeUserRegisterMgr.Status == StartPasscodeUserRegister)
+	{
+		if ((CheckMemoryMgr.FpMasterNum == 0x00 )
+			&&(PasscodeUserRegisterMgr.UserPriority == User)
+			&&(CheckMemoryMgr.PasscodeMasterNum == 0x00)
+			)
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = SystemNoMaster;
+			PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;
+			PLAY_VOICE_ONESEGMENT(VoiceMgr.volume,VOICE_PleaseAddMasterFirst);
+		}
+		else if ( 	((PasscodeUserRegisterMgr.UserPriority == Master)&&(!(CheckMemoryMgr.PasscodeMasterNum < DEF_MAX_PASSCODEMASTER)))
+					||((PasscodeUserRegisterMgr.UserPriority == User)&&(!(CheckMemoryMgr.PasscodeUserNum < DEF_MAX_PASSCODEUSER)))
+				)
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = MemoryIsFull;
+			PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;
+			PLAY_VOICE_ONESEGMENT(VoiceMgr.volume,VOICE_UsersAreFull);
+		}
+		else
+		{
+			PasscodeUserRegisterMgr.Status = InputPasscodeUserID;
+			DataInputMgr.Status = InputIdle;
+			for (i=0;i<12;i++)
+			{
+				PasscodeInputMgr.InputBuff[i] = 0xFF;		//Initial passcode buffer
+			}
+		}
+	}
+	else if  (PasscodeUserRegisterMgr.Status == InputPasscodeUserID)
+	{
+		if (PasscodeUserRegisterMgr.UserPriority == Master)
+		{
+			PasscodeUserRegisterMgr.UserID = Get_Availabe_PasscodeMasterID();
+		}
+		else
+		{
+			PasscodeUserRegisterMgr.UserID = Get_Availabe_PasscodeUserID();
+		}
+		
+		if (SystemLanguage == Chinese)
+		{
+//			DisHZ16x14Str(3,20,UserIDStr,NormalDisplay);
+//			DisOneDigital16x8(3,84,PasscodeUserRegisterMgr.UserID/100,NormalDisplay);
+//			DisOneDigital16x8(3,92,PasscodeUserRegisterMgr.UserID%100/10,NormalDisplay);
+//			DisOneDigital16x8(3,100,PasscodeUserRegisterMgr.UserID%10,NormalDisplay);
+		}
+		else
+		{
+//			DisEN16x8Str(2,20,UserIDStrEn,NormalDisplay);
+//			DisOneDigital16x8(2,84,PasscodeUserRegisterMgr.UserID/100,NormalDisplay);
+//			DisOneDigital16x8(2,92,PasscodeUserRegisterMgr.UserID%100/10,NormalDisplay);
+//			DisOneDigital16x8(2,100,PasscodeUserRegisterMgr.UserID%10,NormalDisplay);
+		}
+
+		if (SystemLanguage == Chinese)
+		{
+//			DisHZ16x14Str(6,0,PressAsteriskKeyToReturnStr,NormalDisplay);
+//			DisHZ16x14Str(6,76,PressPoundKeyToConfirmStr,NormalDisplay);
+		}
+		else
+		{
+//			DisEN16x8Str(4,0,PressPoundKeyToConfirmStrEn,NormalDisplay);
+//			DisEN16x8Str(6,0,PressAsteriskKeyToReturnStrEn,NormalDisplay);
+		}		
+		
+		PasscodeUserRegisterMgr.Status = ReportPasscodeUserID;
+
+		VoiceReportUserIDWithUserConfirm(PasscodeUserRegisterMgr.UserID);
+		
+		PasscodeUserRegisterMgr.TimeCnt = Def_GuiTimeDelayCnt15s;
+		
+	}
+
+	else if ( PasscodeUserRegisterMgr.Status == ReportPasscodeUserID )
+	{
+		if ( PasscodeUserRegisterMgr.TimeCnt-- <1 )
+		{
+			GoIntoPasscodeMenu_Init();
+		}
+	
+	}
+	else if  ( PasscodeUserRegisterMgr.Status == InputFirstPasscode)
+	{
+		if (SystemLanguage == Chinese){
+//			DisHZ16x14Str(3,24,InputPasscodeStr,NormalDisplay);
+		}
+		else{
+//			DisEN16x8Str(3,16,InputPasscodeStrEn,NormalDisplay);
+		}
+
+		GUI_PasscodeInputCreat(2,0);
+
+		if (PasscodeInputMgr.Status == PasscodeInputEnd)
+		{
+			if ( PasscodeInputMgr.Point > 5 )
+			{
+				for (i=0;i<12;i++)
+				{
+					PasscodeBUFF1[i] = PasscodeInputMgr.InputBuff[i];
+				}
+				PasscodeUserRegisterMgr.Status = InputSecondPasscode;
+				PasscodeUserRegisterMgr.TimeCnt = Def_GuiTimeDelayCnt10s;
+				PasscodeInputMgr.Point = 0x00;
+				PasscodeInputMgr.PasscodeLen = 12;
+				PasscodeInputMgr.Status = PasscodeInputStart;
+				for (i=0;i<12;i++)
+				{
+					PasscodeInputMgr.InputBuff[i] = 0xFF;		//Initial passcode buffer
+				}
+				PasscodeUserRegisterMgr.TimeCnt = Def_WaitUserInputPasscodeTimeDelay;	
+				GUI_Flag_RefreshLCD = bTRUE;
+				PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,VoiceStr_PleaseInputPasswordAgain);
+			}
+			else
+			{
+				PasscodeUserRegisterMgr.Status = InputFirstPasscode;
+				PasscodeInputMgr.Point = 0x00;
+				PasscodeInputMgr.PasscodeLen = 12;
+				PasscodeInputMgr.Status = PasscodeInputStart;
+				for (i=0;i<12;i++)
+				{
+					PasscodeInputMgr.InputBuff[i] = 0xFF;		//Initial passcode buffer
+				}
+				PasscodeUserRegisterMgr.TimeCnt = Def_WaitUserInputPasscodeTimeDelay;
+				PLAY_VOICE_ONESEGMENT(VoiceMgr.volume,VOICE_InputError);
+				GUI_Flag_RefreshLCD = bTRUE;
+			}
+		}
+		else if ( PasscodeInputMgr.Status == PasscodeInputExit )
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = QUIT;
+			PasscodeUserRegisterMgr.TimeCnt = 1;
+		}
+
+		if ( PasscodeUserRegisterMgr.TimeCnt > 0 )
+		{
+			PasscodeUserRegisterMgr.TimeCnt--;
+		}
+		else
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = QUIT;
+			PasscodeUserRegisterMgr.TimeCnt = 1;
+		}
+		
+	}
+	else if ( PasscodeUserRegisterMgr.Status == InputSecondPasscode )
+	{
+		if (SystemLanguage == Chinese){
+			DisHZ16x14Str(3,24,ConfirmPasscode,NormalDisplay);
+		}
+		else{
+			DisEN16x8Str(3,24,ConfirmPasscodeEn,NormalDisplay);
+		}
+		
+		GUI_PasscodeInputCreat(5,0);
+
+		if (PasscodeInputMgr.Status == PasscodeInputEnd)
+		{
+			if ( PasscodeInputMgr.Point > 5 )
+				{
+					PasscodeUserRegisterMgr.Status = CompareTwoPasscode;	
+					GUI_Flag_RefreshLCD = bTRUE;
+				}
+			else
+				{
+					PasscodeUserRegisterMgr.Status = InputSecondPasscode;
+					PasscodeInputMgr.Point = 0x00;
+					PasscodeInputMgr.PasscodeLen = 12;
+					PasscodeInputMgr.Status = PasscodeInputStart;
+					for (i=0;i<12;i++)
+					{
+						PasscodeInputMgr.InputBuff[i] = 0xFF;		//Initial passcode buffer
+					}
+					PasscodeUserRegisterMgr.TimeCnt = Def_WaitUserInputPasscodeTimeDelay;	
+					GUI_Flag_RefreshLCD = bTRUE;
+				}
+		}
+		else if ( PasscodeInputMgr.Status == PasscodeInputExit )
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = QUIT;
+			PasscodeUserRegisterMgr.TimeCnt = 1;
+		}
+		
+		if ( PasscodeUserRegisterMgr.TimeCnt > 0 )
+		{
+			PasscodeUserRegisterMgr.TimeCnt--;
+		}
+		else
+		{
+			PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+			PasscodeUserRegisterMgr.ErrorType = QUIT;
+			PasscodeUserRegisterMgr.TimeCnt = 1;
+		}
+
+	}
+	
+	else if ( PasscodeUserRegisterMgr.Status == CompareTwoPasscode )
+		{
+			if (GUI_CompareTwoPasscodes(PasscodeBUFF1,PasscodeInputMgr.InputBuff) == bTRUE)
+				{
+					if (PasscodeIdendify(PasscodeInputMgr.InputBuff) == 0x00 )	//passcode is not be used
+					{
+						if (SavePasscodeUserToMemory(PasscodeInputMgr.InputBuff,PasscodeUserRegisterMgr.UserID) == S_SUCCESS)
+						{
+							PasscodeUserRegisterMgr.Status = RegisterPasscodeUserSuccess;
+							PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;	
+							GUI_Flag_RefreshLCD = bTRUE;
+							PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,VoiceStr_OperationSuccess);
+							if (PasscodeUserRegisterMgr.UserPriority == Master){
+								CheckMemoryMgr.PasscodeMasterNum+=1;
+							}
+							else{
+								CheckMemoryMgr.PasscodeUserNum+=1;
+							}
+							
+							ComPort_SetPost_Info(DEF_WifiInfo_AddUser,PASSCODEUSER,PasscodeUserRegisterMgr.UserID);
+							#if defined (Function_YouzhiyunjiaWifi) || defined (Function_TuyaWifi)
+							Wifi_PostEvent(DEF_WifiEvent_AddUser,PASSCODEUSER,PasscodeUserRegisterMgr.UserID);
+							#endif
+							
+						}
+						else
+						{
+							PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+							PasscodeUserRegisterMgr.ErrorType = MemoryIsFull;
+							PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;	
+							GUI_Flag_RefreshLCD = bTRUE;
+							PLAY_VOICE_ONESEGMENT(VoiceMgr.volume,VOICE_UsersAreFull);
+						}
+					}
+					else
+					{
+						PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+						PasscodeUserRegisterMgr.ErrorType = PasscodeIsBeUsed;
+						PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;	
+						GUI_Flag_RefreshLCD = bTRUE;
+						PLAY_VOICE_MULTISEGMENTS(VoiceMgr.volume,VoiceStr_RepeatedPassword);
+					}
+				}
+			else{
+					PasscodeUserRegisterMgr.Status = RegisterPasscodeUserFail;
+					PasscodeUserRegisterMgr.ErrorType = TwoPasscodesDoNotMatch;
+					PasscodeUserRegisterMgr.TimeCnt = Def_MessageBoxTimeDelay;	
+					GUI_Flag_RefreshLCD = bTRUE;
+					PLAY_VOICE_ONESEGMENT(VoiceMgr.volume,VOICE_InputError);
+				}
+
+			if ( PasscodeUserRegisterMgr.Status == RegisterPasscodeUserSuccess )
+			{
+				GUI_SetFPM_LED(DEF_FpmLedMode_Breath,DEF_FpmLedColor_Green,DEF_FpmLedColor_Green,255);
+			}
+			else if (PasscodeUserRegisterMgr.Status == RegisterPasscodeUserFail)
+			{
+				GUI_SetFPM_LED(DEF_FpmLedMode_Breath,DEF_FpmLedColor_Red,DEF_FpmLedColor_Red,255);
+			}
+		}
+
+	else if ( PasscodeUserRegisterMgr.Status ==  RegisterPasscodeUserSuccess )
+	{
+		if (SystemLanguage == Chinese){
+			DisHZ16x14Str(4,36,OperationSuccessStr,NormalDisplay);
+		}
+		else{
+			DisEN16x8Str(4,36,OperationSuccessStrEn,NormalDisplay);
+		}
+		if ( PasscodeUserRegisterMgr.TimeCnt-- < 1 )
+		{
+			if ((CheckMemoryMgr.FpMasterNum == 0x00 )
+			&&(PasscodeUserRegisterMgr.UserPriority == Master)
+			&&(CheckMemoryMgr.PasscodeMasterNum == 0x01)
+			)
+			{
+				ManagerIdentifyMgr.MasterType = PASSCODEUSER;
+				ManagerIdentifyMgr.PasscodeUserID = 0X01;	
+				GoIntoMainMenu_Init();
+			}
+			else
+			{
+				PasscodeUserRegisterMgr.Status = StartPasscodeUserRegister;
+			}
+			GUI_SetFPM_LED(DEF_FpmLedMode_Breath,DEF_FpmLedColor_Blue,DEF_FpmLedColor_Blue,255);
+			GUI_Flag_RefreshLCD = bTRUE;
+			GUI_CreatAndSaveLog(AddPasscodeUser);
+		}
+	}
+	else if ( PasscodeUserRegisterMgr.Status == RegisterPasscodeUserFail )
+	{
+		if ( PasscodeUserRegisterMgr.ErrorType == SystemNoMaster )
+		{
+			Clear_Screen();
+			DisImage(2,50,27,24,Icon_Warning,NormalDisplay);
+			if (SystemLanguage == Chinese){
+				DisHZ16x14Str(6,14,PleaseAddMasterStr,NormalDisplay);
+			}
+			else{
+				DisEN16x8Str(6,10,PleaseAddMasterStrEn,NormalDisplay);
+			}
+		}
+		else if ( PasscodeUserRegisterMgr.ErrorType == PasscodeIsBeUsed )
+		{
+			if (SystemLanguage == Chinese){
+				//DisHZ16x14Str(3,36,PasscodeIsBeUsedStr,NormalDisplay);
+			}
+			else{
+				//DisEN16x8Str(3,16,PasscodeIsBeUsedStrEn,NormalDisplay);
 			}
 		}
 		else if ( PasscodeUserRegisterMgr.ErrorType == MemoryIsFull )
@@ -14630,6 +15092,10 @@ void GUI_Button_Monitor(void)
 				}
 			}
 			break;
+			
+		case SCREEN_ResManagerIdFace:
+			
+			
 		
 		case SCREEN_RegisterNormalUserFPC:
 			
@@ -14726,8 +15192,6 @@ void GUI_Button_Monitor(void)
 					//GoInTo_ResManagerIdFPCInit();
 					GoInTo_ResNormalIdFaceInit();
 					DataInputMgr.Status = InputIdle;
-					
-					
 				}
 			if(DataInputMgr.Status == InputExit){
 				DataInputMgr.Status = InputIdle;
@@ -14810,6 +15274,20 @@ void GUI_Button_Monitor(void)
 				ShowOperateSuccess();
 			}
 			
+			break;
+			
+		case SCREEN_ResManagerIdFPC:
+			
+			if(gui_keycode != KEY_NONE){
+				GUI_PasscodeInputButtonMonitor(gui_keycode);
+				Clear_Screen_Page(4);
+				Clear_Screen_Page(5);
+				defaultDisplayFlag = 1;
+				keyPressFlag = 1;
+			}
+			ResPassword();
+			
+		
 			break;
 
 		case SCREEN_RegisterMasterFp: 

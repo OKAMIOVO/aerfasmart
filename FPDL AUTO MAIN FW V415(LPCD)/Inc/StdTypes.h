@@ -2122,12 +2122,20 @@ typedef struct
 	bool_t	TrigStrongUnlocking;
 }StrongUnlockMgr_t;
 
+typedef enum{
+	Fingerprint_way,
+	Password_way,
+	Card_way,
+	Face_way
+}resway_t;
+
 typedef struct{
 	uint8_t UserId;
+	resway_t ResWay;
 	FpUserRegisterMgr_t FpUser;
 	PasscodeUserRegisterMgr_t PasscodeUser;
 	CardRegisterMgr_t CardUser;
-	FaceUserRegisterMgr_t FaceUser;
+	FrmMgr_t FaceUser;
 }UserResMsg;
 
 typedef struct{
@@ -2135,14 +2143,14 @@ typedef struct{
 	FpUserDeleteMgr_t FpUserDel;
 	PasscodeUserDeleteMgr_t PasscodeUserDel;
 	CardUserDeleteMgr_t CardUserDel;
-	FaceUserDeleteMgr_t FaceUserDel;
+	FrmMgr_t FaceUserDel;
 }DelUserMsg;
 
 typedef struct{
 	AllUserFpDeleteMgr_t AllDelUserFp;
 	AllPasscodeUserDeleteMgr_t AllDelUserPasscode;
 	AllCardUserDeleteMgr_t AllDelUserCard;
-	AllUserFaceDeleteMgr_t AllDelUserFace;
+	FrmMgr_t AllDelUserFace;
 }AllDelUserMsg;
 
 #ifdef MAIN_C
